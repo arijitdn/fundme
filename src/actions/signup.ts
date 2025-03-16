@@ -14,7 +14,7 @@ export default async function signup(values: z.infer<typeof authFormSchema>) {
     redirect("/error");
   }
 
-  const newUser = await supabase
+  await supabase
     .from("users")
     .insert([
       {
