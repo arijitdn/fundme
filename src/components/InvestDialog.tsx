@@ -10,6 +10,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "./ui/dialog";
+import { useRazorpay } from "react-razorpay";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { formatINR } from "@/lib/formatINR";
@@ -18,6 +19,7 @@ import { useRouter } from "next/navigation";
 export function InvestDialog({ open, onOpenChange, campaign }: any) {
   const [customAmount, setCustomAmount] = useState<any>("");
   const router = useRouter();
+  const { Razorpay } = useRazorpay();
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -66,8 +68,9 @@ export function InvestDialog({ open, onOpenChange, campaign }: any) {
               const response = await axios.post("/api/razorpay", {
                 amount: customAmount,
               });
-              const options = {
-                key: process.env.RAZORPAY_KEY_ID,
+
+              const razorpay = new Razorpay({
+                key: process.env.RAZORPAY_KEY_ID as string,
                 amount: response.data.amount,
                 currency: "INR",
                 name: "FundMe",
@@ -94,9 +97,7 @@ export function InvestDialog({ open, onOpenChange, campaign }: any) {
                     alert("Payment failed!");
                   }
                 },
-              };
-
-              const razorpay = new (window as any).Razorpay(options);
+              });
               razorpay.open();
             }}
             className="bg-blue-600 hover:bg-blue-700"
